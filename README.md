@@ -1,6 +1,6 @@
-# Task Management/Todo App - Intermediate Django Project
+# Task Management/Todo App
 
-A comprehensive team-based task management and collaboration application built with Django. This project demonstrates intermediate Django concepts including models, views, templates, user authentication, and team collaboration features.
+A comprehensive team-based task management and collaboration application built with Django. 
 
 ## 🎯 Features
 
