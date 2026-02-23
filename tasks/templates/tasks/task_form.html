@@ -1,0 +1,74 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Task - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{% if form.instance.pk %}Edit Task{% else %}Create New Task{% endif %}</h2>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Title *</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="alert alert-danger">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="alert alert-danger">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="grid">
+            <div class="form-group">
+                <label for="{{ form.project.id_for_label }}">Project *</label>
+                {{ form.project }}
+                {% if form.project.errors %}
+                    <div class="alert alert-danger">{{ form.project.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.status.id_for_label }}">Status *</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <div class="alert alert-danger">{{ form.status.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="form-group">
+                <label for="{{ form.priority.id_for_label }}">Priority *</label>
+                {{ form.priority }}
+                {% if form.priority.errors %}
+                    <div class="alert alert-danger">{{ form.priority.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.due_date.id_for_label }}">Due Date</label>
+                {{ form.due_date }}
+                {% if form.due_date.errors %}
+                    <div class="alert alert-danger">{{ form.due_date.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-success">
+                {% if form.instance.pk %}Update Task{% else %}Create Task{% endif %}
+            </button>
+            <a href="{% url 'task-list' %}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

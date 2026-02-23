@@ -1,0 +1,43 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}{{ team.name }} - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ team.name }}</h2>
+    <p>{{ team.description }}</p>
+    <p><strong>Owner:</strong> {{ team.owner.get_full_name|default:team.owner.username }}</p>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h3>👥 Members</h3>
+        <ul style="list-style: none; padding: 0;">
+            {% for member in members %}
+                <li style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                    <span style="display: inline-block; width: 32px; height: 32px; background-color: #3498db; color: white; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold;">{{ member.first_name|first|default:member.username|first }}</span>
+                    {{ member.get_full_name|default:member.username }}
+                    {% if member == team.owner %}<span style="color: #27ae60; font-size: 0.9rem;"> (Owner)</span>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="card">
+        <h3>📂 Projects</h3>
+        {% if projects %}
+            <ul style="list-style: none; padding: 0;">
+                {% for project in projects %}
+                    <li style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                        <a href="{% url 'project-detail' project.id %}">{{ project.name }}</a>
+                        <br>
+                        <small style="color: #666;">{{ project.tasks.count }} tasks • {{ project.get_progress }}% complete</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: #999;">No projects yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

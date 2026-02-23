@@ -1,0 +1,66 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Sign Up - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 450px; margin: 2rem auto;">
+    <h2>Create Account</h2>
+    <p style="color: #666; margin-bottom: 2rem;">Join us to start managing your tasks!</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Username *</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <small style="color: #666;">150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.password1.id_for_label }}">Password *</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.password1.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <small style="color: #666;">
+                • Your password can't be too similar to your other personal information.<br>
+                • Your password must contain at least 8 characters.<br>
+                • Your password can't be a commonly used password.<br>
+                • Your password can't be entirely numeric.
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.password2.id_for_label }}">Confirm Password *</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.password2.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <small style="color: #666;">Enter the same password as before, for verification.</small>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%; text-align: center; margin-top: 1rem;">
+            Create Account
+        </button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+        <p>Already have an account? <a href="{% url 'login' %}" style="color: #3498db;">Log in here</a></p>
+    </div>
+</div>
+{% endblock %}

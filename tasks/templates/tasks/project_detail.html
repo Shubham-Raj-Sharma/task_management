@@ -1,0 +1,95 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}{{ project.name }} - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ project.name }}</h2>
+    <p>{{ project.description }}</p>
+    <a href="{% url 'project-update' project.id %}" class="btn">Edit Project</a>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h3>📊 Progress</h3>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ progress }}%;"></div>
+        </div>
+        <p style="text-align: center; font-size: 1.5rem;"><strong>{{ progress }}%</strong></p>
+    </div>
+    
+    <div class="card">
+        <h3>📈 Statistics</h3>
+        <p><strong>Total Tasks:</strong> {{ total_tasks }}</p>
+        <p><strong>✓ Completed:</strong> {{ completed_tasks }}</p>
+        <p><strong>⏳ In Progress:</strong> {{ in_progress_tasks }}</p>
+        <p><strong>📝 To Do:</strong> {{ todo_tasks }}</p>
+    </div>
+    
+    <div class="card">
+        <h3>👥 Team</h3>
+        <p><strong>Team:</strong> {{ project.team.name }}</p>
+        <p><strong>Owner:</strong> {{ project.owner.get_full_name|default:project.owner.username }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Tasks</h2>
+    <a href="{% url 'task-create' %}" class="btn">➕ Add Task</a>
+    
+    {% if overdue_tasks %}
+        <div class="alert alert-danger" style="margin-top: 1rem;">
+            <strong>⚠️ {{ overdue_tasks|length }} Overdue Task{{ overdue_tasks|pluralize }}</strong>
+        </div>
+    {% endif %}
+    
+    {% if tasks %}
+        <table style="margin-top: 1rem;">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'task-detail' task.id %}">{{ task.title }}</a>
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ task.status }}">
+                                {{ task.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="priority-badge priority-{{ task.priority }}">
+                                {{ task.get_priority_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if task.due_date %}
+                                <span {% if task.is_overdue %}style="color: #e74c3c; font-weight: bold;"{% endif %}>
+                                    {{ task.due_date|date:"M d, Y" }}
+                                </span>
+                            {% else %}
+                                <span style="color: #999;">No date</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'task-detail' task.id %}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info" style="margin-top: 1rem;">
+            No tasks yet. <a href="{% url 'task-create' %}">Create a task</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

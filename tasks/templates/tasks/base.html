@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Task Manager{% endblock %}</title>
+    <!-- Flatpickr Date Picker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        nav {
+            background-color: #34495e;
+            padding: 0;
+            margin-top: 0;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #2c3e50;
+        }
+        
+        nav a.active {
+            background-color: #e74c3c;
+        }
+        
+        nav div {
+            display: inline-block;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: #27ae60;
+        }
+        
+        .btn-success:hover {
+            background-color: #229954;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .form-group {
+            margin: 1rem 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-todo {
+            background-color: #e8f4f8;
+            color: #0c5460;
+        }
+        
+        .status-in_progress {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .priority-1 {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .priority-2 {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .priority-3 {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .priority-4 {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #27ae60;
+            transition: width 0.3s;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+        
+        .pagination a,
+        .pagination span {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #3498db;
+            transition: background-color 0.3s;
+        }
+        
+        .pagination a:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .pagination .current {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            nav a {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Flatpickr Date Picker Styling */
+        .flatpickr-calendar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+        }
+        
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        
+        .flatpickr-day:hover,
+        .flatpickr-day.prevMonthDay:hover,
+        .flatpickr-day.nextMonthDay:hover,
+        .flatpickr-day.disabled:hover,
+        .flatpickr-day.disabled.prevMonthDay:hover,
+        .flatpickr-day.disabled.nextMonthDay:hover,
+        .flatpickr-day.inRange:hover,
+        .flatpickr-day.prevMonthDay.inRange:hover,
+        .flatpickr-day.nextMonthDay.inRange:hover,
+        .flatpickr-day.today:hover,
+        .flatpickr-day.prevMonthDay.today:hover,
+        .flatpickr-day.nextMonthDay.today:hover,
+        .flatpickr-day.today.disabled:hover,
+        .flatpickr-day.prevMonthDay.today.disabled:hover,
+        .flatpickr-day.nextMonthDay.today.disabled:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📋 Task Manager</h1>
+    </header>
+    
+    <nav>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'task-list' %}">My Tasks</a>
+            <a href="{% url 'project-list' %}">Projects</a>
+            <a href="{% url 'team-list' %}">Teams</a>
+            <div style="float: right;">
+                <a href="{% url 'profile' %}">👤 {{ user.username }}</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        {% else %}
+            <div style="float: right;">
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Sign Up</a>
+            </div>
+        {% endif %}
+    </nav>
+    
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 Task Manager. All rights reserved.</p>
+    </footer>
+    
+    <!-- Flatpickr Date Picker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+    <script>
+        // Initialize date picker for all due_date inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInputs = document.querySelectorAll('input[name="due_date"]');
+            dateInputs.forEach(function(input) {
+                flatpickr(input, {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    time_24hr: true,
+                    minDate: "today",
+                    minuteIncrement: 15,
+                    placeholder: "Select date and time"
+                });
+            });
+        });
+    </script>
+</body>
+</html>

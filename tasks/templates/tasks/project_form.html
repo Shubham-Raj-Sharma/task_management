@@ -1,0 +1,48 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Project - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{% if form.instance.pk %}Edit Project{% else %}Create New Project{% endif %}</h2>
+</div>
+
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Project Name *</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="alert alert-danger">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="alert alert-danger">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+        
+        {% if not form.instance.pk %}
+            <div class="form-group">
+                <label for="{{ form.team.id_for_label }}">Team *</label>
+                {{ form.team }}
+                {% if form.team.errors %}
+                    <div class="alert alert-danger">{{ form.team.errors }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-success">
+                {% if form.instance.pk %}Update Project{% else %}Create Project{% endif %}
+            </button>
+            <a href="{% url 'project-list' %}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Teams - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Teams</h2>
+    <a href="{% url 'team-create' %}" class="btn">➕ Create New Team</a>
+</div>
+
+{% if object_list %}
+    <div class="grid">
+        {% for team in object_list %}
+            <div class="card">
+                <h3>{{ team.name }}</h3>
+                <p>{{ team.description|truncatewords:20 }}</p>
+                
+                <div style="margin: 1rem 0; padding: 0.5rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+                    <p style="margin: 0.5rem 0;"><strong>👥 Members:</strong> {{ team.members.count }}</p>
+                    <p style="margin: 0.5rem 0;"><strong>📂 Projects:</strong> {{ team.projects.count }}</p>
+                </div>
+                
+                <a href="{% url 'team-detail' team.id %}" class="btn" style="width: 100%; text-align: center;">View Team</a>
+            </div>
+        {% endfor %}
+    </div>
+    
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            
+            <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        You are not a member of any team. <a href="{% url 'team-create' %}">Create a team</a> to get started!
+    </div>
+{% endif %}
+{% endblock %}

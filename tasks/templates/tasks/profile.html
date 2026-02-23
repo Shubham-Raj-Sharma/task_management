@@ -1,0 +1,44 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - Profile{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👤 User Profile</h2>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h3>Account Information</h3>
+        <div style="margin: 1rem 0;">
+            <p><strong>Username:</strong> {{ profile_user.username }}</p>
+            <p><strong>Full Name:</strong> {{ profile_user.get_full_name|default:"Not set" }}</p>
+            <p><strong>Email:</strong> {{ profile_user.email|default:"Not set" }}</p>
+            <p><strong>Member Since:</strong> {{ profile_user.date_joined|date:"F d, Y" }}</p>
+            <p><strong>Last Login:</strong> {{ profile_user.last_login|date:"F d, Y H:i"|default:"Never" }}</p>
+        </div>
+        <a href="{% url 'edit-profile' %}" class="btn" style="margin-top: 1rem;">✏️ Edit Profile</a>
+    </div>
+    
+    <div class="card">
+        <h3>📊 Statistics</h3>
+        <div style="margin: 1rem 0;">
+            <p><strong>Teams:</strong> {{ my_teams_count }}</p>
+            <p><strong>Projects:</strong> {{ my_projects_count }}</p>
+            <p><strong>Tasks Assigned:</strong> {{ my_tasks_count }}</p>
+            <p><strong>Tasks Created:</strong> {{ created_tasks_count }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Security</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+        <a href="{% url 'change-password' %}" class="btn">🔐 Change Password</a>
+    </div>
+</div>
+
+<div class="card" style="text-align: center;">
+    <a href="{% url 'dashboard' %}" class="btn">← Back to Dashboard</a>
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}My Tasks - Task Manager{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>My Tasks</h2>
+    <a href="{% url 'task-create' %}" class="btn">➕ Create New Task</a>
+</div>
+
+<div class="card">
+    <h3>Filters</h3>
+    <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            <option value="todo" {% if request.GET.status == 'todo' %}selected{% endif %}>To Do</option>
+            <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Completed</option>
+        </select>
+        
+        <select name="priority" onchange="this.form.submit()">
+            <option value="">All Priorities</option>
+            <option value="1" {% if request.GET.priority == '1' %}selected{% endif %}>Low</option>
+            <option value="2" {% if request.GET.priority == '2' %}selected{% endif %}>Medium</option>
+            <option value="3" {% if request.GET.priority == '3' %}selected{% endif %}>High</option>
+            <option value="4" {% if request.GET.priority == '4' %}selected{% endif %}>Urgent</option>
+        </select>
+        
+        <select name="project" onchange="this.form.submit()">
+            <option value="">All Projects</option>
+            {% for project in projects %}
+                <option value="{{ project.id }}" {% if request.GET.project|add:"0" == project.id %}selected{% endif %}>{{ project.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+{% if object_list %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Project</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in object_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'task-detail' task.id %}">{{ task.title }}</a>
+                    </td>
+                    <td>{{ task.project.name }}</td>
+                    <td>
+                        <span class="status-badge status-{{ task.status }}">
+                            {{ task.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="priority-badge priority-{{ task.priority }}">
+                            {{ task.get_priority_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if task.due_date %}
+                            <span {% if task.is_overdue %}style="color: #e74c3c; font-weight: bold;"{% endif %}>
+                                {{ task.due_date|date:"M d, Y" }}
+                                {% if task.is_overdue %}⚠️{% endif %}
+                            </span>
+                        {% else %}
+                            <span style="color: #999;">No date</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'task-detail' task.id %}" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            
+            <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        No tasks found. <a href="{% url 'task-create' %}">Create your first task!</a>
+    </div>
+{% endif %}
+{% endblock %}
